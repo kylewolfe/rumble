@@ -8,6 +8,14 @@ specefic encoding.
 
 The mgo API is awesome, and so is boltdb.
 
+## Install
+
+RumbleDB will follow the gopkg.in repository scheme. **Rumble is currently unstable.**
+
+```
+go get -u gopkg.in/kylewolfe/rumble.v0
+```
+
 ## RumbleDB Out of the Box
 
 ```go
