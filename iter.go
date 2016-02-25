@@ -2,16 +2,20 @@ package rumble
 
 import "github.com/boltdb/bolt"
 
+// Iter iterates over a channel of KV and Unmarshals the value
 type Iter struct {
 	bucket *Bucket
 	buf    chan KV
 }
 
+// Pipeline overwrites the Iter channel of KV. Useful for custom pipelines that sort or filter
 func (i *Iter) Pipeline(ch chan KV) *Iter {
 	i.buf = ch
 	return i
 }
 
+// Next Unmarshals the current document into the given interface. Next will return false when the
+// Pipeline channel has been closed and the last record read.
 func (i *Iter) Next(v interface{}) bool {
 	kv, ok := <-i.buf
 
@@ -28,6 +32,7 @@ func (i *Iter) Next(v interface{}) bool {
 	return false
 }
 
+// KV represents a key / value pair within BoltDB
 type KV struct {
 	Key, Value []byte
 }

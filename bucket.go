@@ -2,11 +2,13 @@ package rumble
 
 import "github.com/boltdb/bolt"
 
+// Bucket represents a BoltDB bucket. Methods run from Bucket are thread safe as they wrap thread safe operations exposed by BoltDB.
 type Bucket struct {
 	Name string
 	db   *DB
 }
 
+// NewIter returns a new Iter.
 func (b *Bucket) NewIter() *Iter {
 	// a driver is needed for this operation, ensure one is set
 	b.db.checkDriver()
@@ -14,6 +16,7 @@ func (b *Bucket) NewIter() *Iter {
 	return newIter(b)
 }
 
+// Put is a wrapper for BoltDB's Update method, equivalant to an upsert.
 func (b *Bucket) Put(v interface{}) (err error) {
 	// TODO: support batching
 
@@ -37,6 +40,7 @@ func (b *Bucket) Put(v interface{}) (err error) {
 	})
 }
 
+// Get is a wrapper for BoltDb's Get method.
 func (b *Bucket) Get(k []byte, v interface{}) (err error) {
 	// a driver is needed for this operation, ensure one is set
 	b.db.checkDriver()
@@ -53,6 +57,7 @@ func (b *Bucket) Get(k []byte, v interface{}) (err error) {
 	return err
 }
 
+// Delete is a wrarpper for BoltDB's Delete method.
 func (b *Bucket) Delete(k []byte) (err error) {
 	// a driver is needed for tis operation, ensure one is set
 	b.db.checkDriver()
@@ -63,6 +68,7 @@ func (b *Bucket) Delete(k []byte) (err error) {
 	})
 }
 
+// Count returns the number of entries in the Bucket
 func (b *Bucket) Count() int {
 	i := 0
 	b.db.Bolt.View(func(tx *bolt.Tx) error {
