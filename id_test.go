@@ -124,3 +124,106 @@ func TestGetId(t *testing.T) {
 		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, mapStringAlias)
 	}
 }
+
+func TestSetId(t *testing.T) {
+	// test all combos of body: struct, struct pointer, map, map pointer and id: []byte, alias to []byte, string, alias to string
+	expected := []byte("123")
+
+	// struct, []byte
+	structByte := &struct {
+		Id  []byte `rumble:"id"`
+		Foo string
+	}{
+		Foo: "bar",
+	}
+
+	// struct, alias to []byte
+	structByteAlias := &struct {
+		Id  customIdByteSlice `rumble:"id"`
+		Foo string
+	}{
+		Foo: "bar",
+	}
+
+	// struct, string
+	structString := &struct {
+		Id  string `rumble:"id"`
+		Foo string
+	}{
+		Foo: "bar",
+	}
+
+	// struct, alias to string
+	structStringAlias := &struct {
+		Id  customIdString `rumble:"id"`
+		Foo string
+	}{
+		Foo: "bar",
+	}
+
+	// test pointer structs
+	setId(expected, structByte)
+	if id := getId(structByte); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, structByte)
+	}
+	setId(expected, structByteAlias)
+	if id := getId(structByteAlias); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, structByteAlias)
+	}
+	setId(expected, structString)
+	if id := getId(structString); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, structString)
+	}
+	setId(expected, structStringAlias)
+	if id := getId(structStringAlias); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, structStringAlias)
+	}
+
+	// map, byte
+	mapByte := &M{"foo": "bar"}
+
+	// map, byte alias
+	mapByteAlias := &M{"foo": "bar"}
+
+	// map, string
+	mapString := &M{"foo": "bar"}
+
+	// map, string alias
+	mapStringAlias := &M{"foo": "bar"}
+
+	// test non pointer maps
+	setId(expected, *mapByte)
+	if id := getId(*mapByte); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, *mapByte)
+	}
+	setId(expected, *mapByteAlias)
+	if id := getId(*mapByteAlias); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, *mapByteAlias)
+	}
+	setId(expected, *mapString)
+	if id := getId(*mapString); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, *mapString)
+	}
+	setId(expected, *mapStringAlias)
+	if id := getId(*mapStringAlias); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, *mapStringAlias)
+	}
+
+	// test pointer maps
+	setId(expected, mapByte)
+	if id := getId(mapByte); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, mapByte)
+	}
+	setId(expected, mapByteAlias)
+	if id := getId(mapByteAlias); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, mapByteAlias)
+	}
+	setId(expected, mapString)
+	if id := getId(mapString); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, mapString)
+	}
+	setId(expected, mapStringAlias)
+	if id := getId(mapStringAlias); string(id) != string(expected) {
+		t.Fatalf("expected id '%s', got '%s' from %#v", expected, id, mapStringAlias)
+	}
+}
