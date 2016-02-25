@@ -1,4 +1,4 @@
-rumble [![GoDoc](http://godoc.org/github.com/kylewolfe/rumble?status.svg)](http://godoc.org/github.com/kylewolfe/rumble) 
+rumble [![GoDoc](http://godoc.org/github.com/kylewolfe/rumble?status.svg)](http://godoc.org/github.com/kylewolfe/rumble) [![Build Status](https://travis-ci.org/kylewolfe/rumble.svg?branch=master)](https://travis-ci.org/kylewolfe/rumble) [![Coverage Status](https://coveralls.io/repos/kylewolfe/rumble/badge.svg)](https://coveralls.io/r/kylewolfe/rumble) 
 ======
 
 RumbleDB is an abstraction for boltdb that aims to provide a clean API similiar to that of gopkg.in/mgo.v2 without hiding boltdb away from you completely and without locking you in to a
