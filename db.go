@@ -60,3 +60,17 @@ func (db *DB) DeleteBucket(name string) error {
 		return tx.DeleteBucket([]byte(name))
 	})
 }
+
+// Buckets returns a slice of *Bucket that are present in the current DB
+func (db *DB) Buckets() []*Bucket {
+	var buckets []*Bucket
+	if err := db.Bolt.View(func(tx *bolt.Tx) error {
+		return tx.ForEach(func(name []byte, _ *bolt.Bucket) error {
+			buckets = append(buckets, &Bucket{Name: string(name), db: db})
+			return nil
+		})
+	}); err != nil {
+		panic(err)
+	}
+	return buckets
+}
