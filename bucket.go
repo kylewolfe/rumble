@@ -23,10 +23,10 @@ func (b *Bucket) Put(v interface{}) (err error) {
 	// a dirver is needed for this operation, ensure one is set
 	b.db.checkDriver()
 
-	id := getId(v)
-	if id == nil || len(id) == 0 {
-		id = b.db.NewId()
-		setId(id, v)
+	key := getKey(v)
+	if key == nil || len(key) == 0 {
+		key = b.db.NewKey()
+		setKey(key, v)
 	}
 
 	var d []byte
@@ -36,7 +36,7 @@ func (b *Bucket) Put(v interface{}) (err error) {
 
 	return b.db.Bolt.Update(func(tx *bolt.Tx) error {
 		txBucket := tx.Bucket([]byte(b.Name))
-		return txBucket.Put(id, d)
+		return txBucket.Put(key, d)
 	})
 }
 
@@ -53,7 +53,7 @@ func (b *Bucket) Get(k []byte, v interface{}) (err error) {
 	})
 
 	err = b.db.Unmarshal(d, v)
-	setId(k, v)
+	setKey(k, v)
 	return err
 }
 
