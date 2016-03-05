@@ -21,7 +21,7 @@ type DB struct {
 	Bolt      *bolt.DB
 	Marshal   func(interface{}) ([]byte, error)
 	Unmarshal func([]byte, interface{}) error
-	NewId     func() []byte
+	NewKey     func() []byte
 }
 
 // checkDriver replaces nil Marshal, Unmarshal and NewId functions with those from the bson package
@@ -34,8 +34,8 @@ func (db *DB) checkDriver() {
 		db.Unmarshal = bson.Unmarshal
 	}
 
-	if db.NewId == nil {
-		db.NewId = func() []byte { return []byte(bson.NewObjectId()) }
+	if db.NewKey == nil {
+		db.NewKey = func() []byte { return []byte(bson.NewObjectId()) }
 	}
 }
 

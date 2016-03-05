@@ -25,7 +25,7 @@ func (i *Iter) Next(v interface{}) bool {
 			panic(err)
 		}
 
-		setId(kv.Key, v)
+		setKey(kv.Key, v)
 		return true
 	}
 
