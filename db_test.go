@@ -5,12 +5,7 @@ import (
 	"testing"
 )
 
-const dbPath = "test.db"
-
-var (
-	db  *DB
-	err error
-)
+const DBPATH = "test.db"
 
 func assertPanic(t *testing.T, f func()) {
 	defer func() {
@@ -22,28 +17,32 @@ func assertPanic(t *testing.T, f func()) {
 	f()
 }
 
-func TestMain(m *testing.M) {
-	var r int
-	defer os.Exit(r)
-
-	// create test.db
-	db, err = New(dbPath)
-
-	// run tests
-	r = m.Run()
-
-	// clean up test.db
-	os.Remove(dbPath)
+func prepareTestDB(bt interface{}) *DB {
+	db, err := New(DBPATH)
+	if err != nil {
+		switch t := bt.(type) {
+		case *testing.T:
+			t.Fatal(err)
+		case *testing.B:
+			t.Fatal(err)
+		default:
+			panic(err)
+		}
+	}
+	return db
 }
 
 func TestDB(t *testing.T) {
+	db := prepareTestDB(t)
+	defer os.Remove(DBPATH)
+
 	b := db.Bucket("foo")
 
 	if c := b.Count(); c != 0 {
 		t.Fatalf("expected count to be 0, got %v", c)
 	}
 
-	if err = b.Put(map[string]interface{}{"fizz": "buzz"}); err != nil {
+	if err := b.Put(map[string]interface{}{"fizz": "buzz"}); err != nil {
 		t.Fatalf("error inserting map into foo: %s", err)
 	}
 
@@ -56,9 +55,10 @@ func TestDB(t *testing.T) {
 		t.Fatalf("expected count to be 1, got %v", c)
 	}
 
-	if err = db.DeleteBucket("foo"); err != nil {
+	if err := db.DeleteBucket("foo"); err != nil {
 		t.Fatalf("error deleting bucket: %s", err)
 	}
 
+	// ensure delete occured by checking for panic on count
 	assertPanic(t, func() { b2.Count() })
 }
