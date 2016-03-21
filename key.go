@@ -8,7 +8,7 @@ import (
 func getKey(v interface{}) []byte {
 	val := getReflectValue(reflect.ValueOf(v))
 
-	// return nil on invalkey reflect value
+	// return nil on invalid key reflect value
 	if !val.IsValid() {
 		return nil
 	}

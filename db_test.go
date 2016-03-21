@@ -5,8 +5,6 @@ import (
 	"testing"
 )
 
-const DBPATH = "test.db"
-
 func assertPanic(t *testing.T, f func()) {
 	defer func() {
 		if r := recover(); r == nil {
@@ -17,8 +15,8 @@ func assertPanic(t *testing.T, f func()) {
 	f()
 }
 
-func prepareTestDB(bt interface{}) *DB {
-	db, err := New(DBPATH)
+func prepareTestDB(bt interface{}, name string) *DB {
+	db, err := New(name)
 	if err != nil {
 		switch t := bt.(type) {
 		case *testing.T:
@@ -33,8 +31,8 @@ func prepareTestDB(bt interface{}) *DB {
 }
 
 func TestDB(t *testing.T) {
-	db := prepareTestDB(t)
-	defer os.Remove(DBPATH)
+	db := prepareTestDB(t, "TestDB.db")
+	defer os.Remove("TestDB.db")
 
 	b := db.Bucket("foo")
 

@@ -17,27 +17,32 @@ func (b *Bucket) NewIter() *Iter {
 }
 
 // Put is a wrapper for BoltDB's Update method, equivalant to an upsert.
-func (b *Bucket) Put(v interface{}) (err error) {
+func (b *Bucket) Put(v ...interface{}) (err error) {
 	// TODO: support batching
 
 	// a dirver is needed for this operation, ensure one is set
 	b.db.checkDriver()
 
-	key := getKey(v)
-	if key == nil || len(key) == 0 {
-		key = b.db.NewKey()
-		setKey(key, v)
-	}
+	for _, doc := range v {
+		key := getKey(doc)
+		if key == nil || len(key) == 0 {
+			key = b.db.NewKey()
+			setKey(key, doc)
+		}
 
-	var d []byte
-	if d, err = b.db.Marshal(v); err != nil {
-		return err
-	}
+		var d []byte
+		if d, err = b.db.Marshal(doc); err != nil {
+			return err
+		}
 
-	return b.db.Bolt.Update(func(tx *bolt.Tx) error {
-		txBucket := tx.Bucket([]byte(b.Name))
-		return txBucket.Put(key, d)
-	})
+		if err := b.db.Bolt.Update(func(tx *bolt.Tx) error {
+			txBucket := tx.Bucket([]byte(b.Name))
+			return txBucket.Put(key, d)
+		}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Get is a wrapper for BoltDb's Get method.
