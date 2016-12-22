@@ -1,5 +1,4 @@
 // Package rumble is a simple key / document store wrapper for boltdb with an API comparable to mgo.
-
 package rumble
 
 import (
@@ -18,24 +17,24 @@ func New(path string) (*DB, error) {
 
 // DB is an abstraction for BoltDB that provides an API compaprable to mgo.
 type DB struct {
-	Bolt      *bolt.DB
-	Marshal   func(interface{}) ([]byte, error)
-	Unmarshal func([]byte, interface{}) error
-	NewKey     func() []byte
+	Bolt          *bolt.DB
+	MarshalFunc   func(interface{}) ([]byte, error)
+	UnmarshalFunc func([]byte, interface{}) error
+	NewKeyFunc    func() []byte
 }
 
 // checkDriver replaces nil Marshal, Unmarshal and NewId functions with those from the bson package
 func (db *DB) checkDriver() {
-	if db.Marshal == nil {
-		db.Marshal = bson.Marshal
+	if db.MarshalFunc == nil {
+		db.MarshalFunc = bson.Marshal
 	}
 
-	if db.Unmarshal == nil {
-		db.Unmarshal = bson.Unmarshal
+	if db.UnmarshalFunc == nil {
+		db.UnmarshalFunc = bson.Unmarshal
 	}
 
-	if db.NewKey == nil {
-		db.NewKey = func() []byte { return []byte(bson.NewObjectId()) }
+	if db.NewKeyFunc == nil {
+		db.NewKeyFunc = func() []byte { return []byte(bson.NewObjectId()) }
 	}
 }
 

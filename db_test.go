@@ -32,7 +32,10 @@ func prepareTestDB(bt interface{}, name string) *DB {
 
 func TestDB(t *testing.T) {
 	db := prepareTestDB(t, "TestDB.db")
-	defer os.Remove("TestDB.db")
+	defer func() {
+		db.Bolt.Close()
+		os.Remove("TestDB.db")
+	}()
 
 	b := db.Bucket("foo")
 
