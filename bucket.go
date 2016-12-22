@@ -8,12 +8,13 @@ type Bucket struct {
 	db   *DB
 }
 
-// NewIter returns a new Iter.
-func (b *Bucket) NewIter() *Iter {
+// Iterator returns a new Iterator with the given predicate. If a predicate is given, it will be called against every key:value pair and must return
+// true for the record to be returned by the iterator. A nil predicate may be given to return all values from the bucket. This is useful when a quick
+// check can be done against the data before it is passed to the DB.UnmarshalerFunc
+func (b *Bucket) Iterator(predicate func(k, v []byte) bool) *Iterator {
 	// a driver is needed for this operation, ensure one is set
 	b.db.checkDriver()
-
-	return newIter(b)
+	return newIterator(b, predicate)
 }
 
 // Put is a wrapper for BoltDB's Update method, equivalant to an upsert.
@@ -26,12 +27,12 @@ func (b *Bucket) Put(v ...interface{}) (err error) {
 	for _, doc := range v {
 		key := getKey(doc)
 		if key == nil || len(key) == 0 {
-			key = b.db.NewKey()
+			key = b.db.NewKeyFunc()
 			setKey(key, doc)
 		}
 
 		var d []byte
-		if d, err = b.db.Marshal(doc); err != nil {
+		if d, err = b.db.MarshalFunc(doc); err != nil {
 			return err
 		}
 
@@ -57,7 +58,7 @@ func (b *Bucket) Get(k []byte, v interface{}) (err error) {
 		return nil
 	})
 
-	err = b.db.Unmarshal(d, v)
+	err = b.db.UnmarshalFunc(d, v)
 	setKey(k, v)
 	return err
 }

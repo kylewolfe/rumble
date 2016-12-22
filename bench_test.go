@@ -38,7 +38,10 @@ func init() {
 // TODO: Make test closer to what RumbleDB is actually doing
 func benchBoltInsert(b *testing.B, batchSize int) {
 	db := prepareTestDB(b, "benchBoltInsert.db")
-	defer os.Remove("benchBoltInsert.db")
+	defer func() {
+		db.Bolt.Close()
+		os.Remove("benchBoltInsert.db")
+	}()
 
 	var keys [][]byte
 	for i := 0; i < batchSize; i++ {
@@ -67,7 +70,10 @@ func benchBoltInsert(b *testing.B, batchSize int) {
 
 func benchRumbleInsertWithID(b *testing.B, batchSize int) {
 	db := prepareTestDB(b, "benchRumbleInsertWithID.db")
-	defer os.Remove("benchRumbleInsertWithID.db")
+	defer func() {
+		db.Bolt.Close()
+		os.Remove("benchRumbleInsertWithID.db")
+	}()
 
 	bucket := db.Bucket("foo")
 
@@ -86,7 +92,10 @@ func benchRumbleInsertWithID(b *testing.B, batchSize int) {
 
 func benchRumbleInsertNoID(b *testing.B, batchSize int) {
 	db := prepareTestDB(b, "benchRumbleInsertNoID.db")
-	defer os.Remove("benchRumbleInsertNoID.db")
+	defer func() {
+		db.Bolt.Close()
+		os.Remove("benchRumbleInsertNoID.db")
+	}()
 
 	bucket := db.Bucket("foo")
 

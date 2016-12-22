@@ -30,7 +30,7 @@ if db, err = rumble.New("test.db"); err != nil {
 bucket := db.Bucket("foo")
 for i := 0; i < 3; i++ {
 	foo := &struct {
-		Id    bson.ObjectId `rumble:"id"`
+		Id    bson.ObjectId `rumble:"key"`
 		Fizz  string
 		Count int
 	}{
@@ -46,7 +46,7 @@ for i := 0; i < 3; i++ {
 // iteration
 i := bucket.NewIter()
 foo := &struct {
-	Id    bson.ObjectId `rumble:"id"`
+	Id    bson.ObjectId `rumble:"key"`
 	Fizz  string
 	Count int
 }{}
@@ -68,7 +68,7 @@ fmt.Println(m)
 // created: 2016-02-17 18:18:16 -0500 EST
 // created: 2016-02-17 18:18:16 -0500 EST
 // created: 2016-02-17 18:18:16 -0500 EST
-// map[_id:[86 196 255 185 158 86 167 60 237 66 39 217] foo:bar]
+// map[_key:[86 196 255 185 158 86 167 60 237 66 39 217] foo:bar]
 ```
 
 ## Bring Your Own Encoding
