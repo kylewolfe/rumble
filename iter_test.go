@@ -54,7 +54,7 @@ func TestIterator(t *testing.T) {
 	}
 
 	for _, it := range iterTests {
-		i := bucket.Iterator(it.predicate)
+		i := bucket.Iterate(it.predicate)
 
 		var results []string
 
