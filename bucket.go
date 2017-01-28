@@ -8,10 +8,10 @@ type Bucket struct {
 	db   *DB
 }
 
-// Iterator returns a new Iterator with the given predicate. If a predicate is given, it will be called against every key:value pair and must return
+// Iterate returns a new Iterator with the given predicate. If a predicate is given, it will be called against every key:value pair and must return
 // true for the record to be returned by the iterator. A nil predicate may be given to return all values from the bucket. This is useful when a quick
 // check can be done against the data before it is passed to the DB.UnmarshalerFunc
-func (b *Bucket) Iterator(predicate func(k, v []byte) bool) *Iterator {
+func (b *Bucket) Iterate(predicate func(k, v []byte) bool) *Iterator {
 	// a driver is needed for this operation, ensure one is set
 	b.db.checkDriver()
 	return newIterator(b, predicate)
